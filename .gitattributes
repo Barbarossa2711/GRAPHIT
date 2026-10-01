@@ -1,0 +1,4 @@
+# Shell scripts run inside Linux containers: CRLF would break the interpreter.
+*.sh text eol=lf
+# Dumps are binary archives, no line-ending conversion.
+*.dump binary

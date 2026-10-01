@@ -1,0 +1,18 @@
+# Server-only subset of ../../requirements.txt.
+#
+# pymupdf is left out: it is only used by the offline script BDT2026_data/build_chunks.py,
+# and BDT2026_data/__init__.py is empty, so importing the package never pulls it in.
+#
+# Keep this file in sync with ../../requirements.txt.
+
+openai>=2.0
+langchain>=1.0
+langchain-openai>=1.0
+langgraph>=1.0
+langgraph-supervisor>=0.0.31
+pydantic>=2.0
+python-dotenv>=1.0
+jsonschema>=4.0
+neo4j>=6.0
+fastapi>=0.115
+uvicorn>=0.30

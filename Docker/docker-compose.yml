@@ -1,0 +1,114 @@
+# Run all commands from this directory so that Compose loads Docker/.env:
+#   docker compose --profile build build
+#   docker compose up -d
+
+name: graphit
+
+networks:
+  graphit-net:
+    # Literal name: DockerSpawner attaches notebook containers by this name (network_name).
+    name: graphit-net
+
+volumes:
+  neo4j-data:
+  neo4j-logs:
+  jupyterhub-data:
+
+services:
+  neo4j:
+    image: neo4j:2026.07
+    container_name: graphit-neo4j
+    networks: [graphit-net]
+    environment:
+      NEO4J_AUTH: neo4j/${NEO4J_PASSWORD:?set NEO4J_PASSWORD in Docker/.env}
+      # Must not start with NEO4J_, the entrypoint would treat it as a config setting.
+      GRAPHIT_NEO4J_PASSWORD: ${NEO4J_PASSWORD}
+      NEO4J_server_memory_heap_max__size: 1G
+      NEO4J_server_memory_pagecache_size: 512m
+      GRAPHIT_DUMP_AUS: ${GRAPHIT_DUMP_AUS:-0}
+      GRAPHIT_DUMP_BEHALTEN: ${GRAPHIT_DUMP_BEHALTEN:-3}
+    volumes:
+      - neo4j-data:/data
+      - neo4j-logs:/logs
+      - ./neo4j/dumps:/dumps
+      - ./neo4j/entrypoint-dump.sh:/graphit/entrypoint-dump.sh:ro
+    entrypoint: ["/bin/bash", "/graphit/entrypoint-dump.sh"]
+    # Shutdown and the dump afterwards must both fit into this grace period.
+    stop_grace_period: 180s
+    ports:
+      - "127.0.0.1:7474:7474"
+      - "127.0.0.1:7687:7687"
+    healthcheck:
+      # cypher-shell instead of HTTP: HTTP answers before Bolt accepts authenticated sessions.
+      test: ["CMD-SHELL", "cypher-shell -u neo4j -p \"$$GRAPHIT_NEO4J_PASSWORD\" 'RETURN 1' || exit 1"]
+      interval: 10s
+      timeout: 10s
+      retries: 30
+      start_period: 60s
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ..
+      dockerfile: Docker/backend/Dockerfile
+    image: graphit-backend:0.1.0
+    container_name: graphit-backend
+    networks: [graphit-net]
+    depends_on:
+      neo4j:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      NEO4J_URI: bolt://neo4j:7687
+      NEO4J_USER: neo4j
+      NEO4J_DATABASE: neo4j
+      # Origin of the page served by the hub, not of the backend; no "*" with credentials.
+      GRAPHIT_CORS_ORIGINS: "http://localhost:8000,http://127.0.0.1:8000"
+      LANGSMITH_TRACING: "false"
+    volumes:
+      # Optional CA certificate of a self-signed LLM endpoint; point LLM_CA_BUNDLE in
+      # Docker/.env to /etc/graphit/certs/<file> to use it.
+      - ./certs:/etc/graphit/certs:ro
+    ports:
+      # Loopback only: the backend has no authentication of its own.
+      - "127.0.0.1:8077:8077"
+    restart: unless-stopped
+
+  jupyterhub:
+    build:
+      context: ./jupyterhub
+    image: graphit-jupyterhub:0.1.0
+    # Must match hub_connect_ip in jupyterhub_config.py.
+    container_name: jupyterhub
+    networks: [graphit-net]
+    depends_on:
+      backend:
+        condition: service_healthy
+    environment:
+      DOCKER_SINGLEUSER_IMAGE: graphit-singleuser:0.1.0
+      DOCKER_NETWORK_NAME: graphit-net
+      HUB_CONNECT_IP: jupyterhub
+      JUPYTERHUB_ADMIN: ${JUPYTERHUB_ADMIN:-admin}
+      # Where the browser reaches the backend, i.e. the published host port.
+      GRAPHIT_BASE_URL: ${GRAPHIT_BASE_URL:-http://localhost:8077}
+      GRAPHIT_SHOW_DIAGNOSTICS: ${GRAPHIT_SHOW_DIAGNOSTICS:-}
+      GRAPHIT_MOCK_MODE: ${GRAPHIT_MOCK_MODE:-}
+      GRAPHIT_STREAMING: ${GRAPHIT_STREAMING:-}
+      GRAPHIT_CHAT_MODEL: ${GRAPHIT_CHAT_MODEL:-}
+      GRAPHIT_REVIEW_SESSION_SIZE: ${GRAPHIT_REVIEW_SESSION_SIZE:-}
+      GRAPHIT_PERSIST_CHAT_HISTORY: ${GRAPHIT_PERSIST_CHAT_HISTORY:-}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - jupyterhub-data:/srv/jupyterhub
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+
+  singleuser:
+    # Build-only service: DockerSpawner uses the image, Compose must never start it.
+    profiles: ["build"]
+    build:
+      context: .
+      dockerfile: singleuser/Dockerfile
+    image: graphit-singleuser:0.1.0

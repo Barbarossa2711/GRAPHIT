@@ -1,0 +1,10 @@
+# Additional packages for the hub image. jupyterhub itself comes from the base image
+# (quay.io/jupyterhub/jupyterhub:5.5.1) and MUST match the version installed by
+# Docker/singleuser/Dockerfile.
+#
+# Compatibility (PyPI metadata):
+#   dockerspawner 14.0.0            -> jupyterhub>=4
+#   jupyterhub-nativeauthenticator  -> jupyterhub>=4.1.6
+
+dockerspawner==14.0.0
+jupyterhub-nativeauthenticator==1.3.0

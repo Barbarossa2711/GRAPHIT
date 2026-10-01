@@ -1,0 +1,112 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "GraphitQuestion",
+  "type": "object",
+  "required": ["type", "prompt", "solution"],
+  "properties": {
+    "type": { "enum": ["single", "multiple", "cloze", "match", "order"] },
+    "prompt": { "type": "string" },
+    "text": { "type": "string" },
+    "explanation": { "type": "string" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "type": { "const": "single" } } },
+      "then": {
+        "required": ["options"],
+        "properties": {
+          "options": {
+            "type": "array",
+            "minItems": 2,
+            "items": {
+              "type": "object",
+              "required": ["id", "text"],
+              "properties": {
+                "id": { "type": "string" },
+                "text": { "type": "string" }
+              }
+            }
+          },
+          "solution": {
+            "type": "object",
+            "required": ["correct"],
+            "properties": { "correct": { "type": "string" } }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "type": { "const": "multiple" } } },
+      "then": {
+        "required": ["options"],
+        "properties": {
+          "options": { "type": "array", "minItems": 2 },
+          "solution": {
+            "type": "object",
+            "required": ["correct"],
+            "properties": {
+              "correct": {
+                "type": "array",
+                "items": { "type": "string" },
+                "minItems": 1
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "type": { "const": "cloze" } } },
+      "then": {
+        "required": ["text", "blanks", "bank"],
+        "properties": {
+          "blanks": {
+            "type": "array",
+            "items": { "type": "string" },
+            "minItems": 1
+          },
+          "bank": {
+            "type": "array",
+            "minItems": 2,
+            "items": {
+              "type": "object",
+              "required": ["id", "text"]
+            }
+          },
+          "solution": { "type": "object" }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "type": { "const": "match" } } },
+      "then": {
+        "required": ["left", "right"],
+        "properties": {
+          "left": { "type": "array", "minItems": 2 },
+          "right": { "type": "array", "minItems": 2 },
+          "solution": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["left", "right"]
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "type": { "const": "order" } } },
+      "then": {
+        "required": ["items"],
+        "properties": {
+          "items": { "type": "array", "minItems": 2 },
+          "solution": {
+            "type": "array",
+            "items": { "type": "string" },
+            "minItems": 2
+          }
+        }
+      }
+    }
+  ]
+}

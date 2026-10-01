@@ -1,0 +1,19 @@
+**/.git
+**/.venv
+**/__pycache__
+**/*.pyc
+**/.idea
+**/.claude
+
+# Keys must never end up in an image layer.
+**/.env
+
+docs/
+repair_backup_*.json
+Multiagent/BDT2026_data/_backups/
+
+# The exception must come after the rule.
+Docker/
+!Docker/backend/requirements.server.txt
+
+**/*.md

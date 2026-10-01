@@ -1,0 +1,25 @@
+# Secrets
+.env
+*.env
+!.env.example
+Docker/certs/*
+!Docker/certs/.gitkeep
+
+# Course data (bring your own, see README "Data")
+Multiagent/BDT2026_data/*.json
+Multiagent/BDT2026_data/_backups/
+BDT_Folien/
+repair_backup_*.json
+
+# Neo4j dumps
+Docker/neo4j/dumps/**/*.dump
+Docker/neo4j/dumps/auto/
+
+# Python / tooling
+__pycache__/
+*.pyc
+.venv/
+venv/
+.idea/
+.vscode/
+.claude/
