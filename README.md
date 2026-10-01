@@ -21,9 +21,7 @@ wheel of the extension; the extension's source code lives in
 > documentation are in English. Lecture content is **not** part of this repository, see
 > [Data](#data).
 
-<!-- SCREENSHOT: overview of the JupyterLab workspace with the GRAPHIT sidebar and chat
-![GRAPHIT in JupyterLab](docs/screenshots/overview.png)
--->
+![GRAPHIT in JupyterLab: sidebar with review load and activity, domain tree and concept details](docs/screenshots/overview.png)
 
 ---
 
@@ -78,20 +76,16 @@ wheel of the extension; the extension's source code lives in
 
 ## Screenshots
 
-<!-- Add the screenshots to docs/screenshots/ and remove the comment markers below. -->
+The user interface is in German.
 
-<!--
 | | |
 |---|---|
-| ![Domain tree](docs/screenshots/domain-tree.png) | ![Tutor chat](docs/screenshots/chat.png) |
-| *Domain tree with learning state* | *Tutor chat with slide citations* |
-| ![Quiz](docs/screenshots/quiz.png) | ![Quiz feedback](docs/screenshots/quiz-feedback.png) |
-| *Quiz* | *Feedback per question type* |
-| ![Learning path](docs/screenshots/learning-path.png) | ![Statistics](docs/screenshots/statistics.png) |
-| *Learning path recommendation* | *Statistics* |
-| ![Review](docs/screenshots/review.png) | ![Tour](docs/screenshots/tour.png) |
-| *Review of due concepts* | *Guided tour* |
--->
+| ![Learning path recommendation](docs/screenshots/learning-path.png) | ![Statistics](docs/screenshots/statistics.png) |
+| *Learning path recommendation above the domain tree* | *Statistics: overall progress, review load, progress per chapter* |
+| ![Review](docs/screenshots/review.png) | ![Combined review quiz](docs/screenshots/review-quiz.png) |
+| *Concepts due for review* | *Combined review quiz with question map* |
+| ![Quiz feedback](docs/screenshots/quiz-feedback.png) | ![Manual](docs/screenshots/manual.png) |
+| *Feedback per question type and updated mastery* | *Built-in manual* |
 
 ---
 
