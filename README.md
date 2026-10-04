@@ -14,7 +14,9 @@ Students use GRAPHIT inside **JupyterLab** through the `graphit-jupyter` extensi
 **JupyterHub** gives every student an own, preconfigured environment. The whole stack runs
 with Docker Compose. This repository contains the backend, the deployment and a prebuilt
 wheel of the extension; the extension's source code lives in
-[GRAPHIT-Frontend](https://github.com/Barbarossa2711/GRAPHIT-Frontend).
+[GRAPHIT-Frontend](https://github.com/Barbarossa2711/GRAPHIT-Frontend). The knowledge
+graph itself is built with the companion tool
+[LectureToGraph](https://github.com/Barbarossa2711/LectureToGraph), see [Data](#data).
 
 > GRAPHIT was built for the master's lecture *Big Data Technologies*. The user interface,
 > the agent prompts and the generated questions are in **German**; the code and this
@@ -396,6 +398,20 @@ The repository contains no lecture material. To run GRAPHIT for a lecture you ne
 things.
 
 ### 1. Knowledge graph (Neo4j)
+
+The graph can be built with **[LectureToGraph](https://github.com/Barbarossa2711/LectureToGraph)**
+(version used together with this release:
+[`v1.0-lecture2graph`](https://github.com/Barbarossa2711/LectureToGraph/tree/v1.0-lecture2graph)).
+An LLM agent reads the lecture slides and builds the domain model chapter by chapter —
+hierarchy, slides, `PREREQUISITE`/`FACILITATOR`/`SAME_AS` edges and review questions — while
+the lecturer reviews and approves every stage. Its output can be uploaded to Neo4j directly.
+
+LectureToGraph stores the page of a slide as `pageNr`, while GRAPHIT reads `pageNumber`.
+After importing a LectureToGraph graph, copy the property once:
+
+```cypher
+MATCH (s:Slide) WHERE s.pageNumber IS NULL SET s.pageNumber = s.pageNr;
+```
 
 The graph must follow the schema in [Knowledge graph](#knowledge-graph). Required
 properties:
