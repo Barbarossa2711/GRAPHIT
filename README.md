@@ -263,6 +263,7 @@ distractors) are logged per item.
 │   ├── GRAPHIT_Frontend_extension/  prebuilt graphit-jupyter wheel
 │   └── certs/                   optional CA certificate of the LLM endpoint
 ├── docs/screenshots/
+├── LICENSE
 └── requirements.txt
 ```
 
@@ -528,4 +529,4 @@ All tools run from the repository root (or inside the backend container) with
 
 ## License
 
-The license has not been chosen yet.
+GRAPHIT is released under the [MIT License](LICENSE).
