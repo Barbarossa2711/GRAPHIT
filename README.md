@@ -404,14 +404,8 @@ The graph can be built with **[LectureToGraph](https://github.com/Barbarossa2711
 [`v1.0-lecture2graph`](https://github.com/Barbarossa2711/LectureToGraph/tree/v1.0-lecture2graph)).
 An LLM agent reads the lecture slides and builds the domain model chapter by chapter —
 hierarchy, slides, `PREREQUISITE`/`FACILITATOR`/`SAME_AS` edges and review questions — while
-the lecturer reviews and approves every stage. Its output can be uploaded to Neo4j directly.
-
-LectureToGraph stores the page of a slide as `pageNr`, while GRAPHIT reads `pageNumber`.
-After importing a LectureToGraph graph, copy the property once:
-
-```cypher
-MATCH (s:Slide) WHERE s.pageNumber IS NULL SET s.pageNumber = s.pageNr;
-```
+the lecturer reviews and approves every stage. Its output follows the schema below and can
+be uploaded to Neo4j directly.
 
 The graph must follow the schema in [Knowledge graph](#knowledge-graph). Required
 properties:
